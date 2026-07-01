@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoreX Technology — Engineering Growth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E1A;
+    --panel:#11162A;
+    --panel-2:#161C36;
+    --cyan:#00D4FF;
+    --violet:#7B5CFF;
+    --text:#E8EBF5;
+    --muted:#8890A8;
+    --line:rgba(232,235,245,0.09);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--cyan);color:#04060C;}
+
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  a{color:inherit;text-decoration:none;}
+
+  /* ---------- Loader ---------- */
+  #loader{
+    position:fixed;inset:0;background:var(--bg);z-index:999;
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity .8s ease, visibility .8s ease;
+  }
+  #loader.hidden{opacity:0;visibility:hidden;}
+  .loader-core{
+    width:48px;height:48px;border:2px solid var(--line);
+    border-top:2px solid var(--cyan);border-radius:50%;
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Canvas ---------- */
+  #core-canvas{
+    position:absolute;top:0;left:0;width:100%;height:100%;
+    z-index:1;
+  }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;width:100%;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 5vw;
+    transition:padding .35s ease, background .35s ease, border-color .35s ease;
+    border-bottom:1px solid transparent;
+  }
+  nav.scrolled{
+    padding:14px 5vw;
+    background:rgba(10,14,26,0.82);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.15rem;
+    display:flex;align-items:center;gap:8px;letter-spacing:0.5px;
+  }
+  .logo span{color:var(--cyan);}
+  .nav-links{display:flex;gap:38px;}
+  .nav-links a{
+    font-size:0.88rem;color:var(--muted);font-weight:500;
+    position:relative;transition:color .25s ease;
+  }
+  .nav-links a:hover{color:var(--text);}
+  .nav-links a::after{
+    content:'';position:absolute;left:0;bottom:-6px;width:0;height:1px;
+    background:var(--cyan);transition:width .3s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .nav-cta{
+    border:1px solid var(--line);padding:9px 20px;border-radius:100px;
+    font-size:0.82rem;font-weight:500;transition:all .3s ease;
+  }
+  .nav-cta:hover{border-color:var(--cyan);box-shadow:0 0 18px rgba(0,212,255,0.25);}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:200;}
+  .hamburger span{width:24px;height:2px;background:var(--text);transition:.3s;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:0 5vw;overflow:hidden;
+  }
+  .eyebrow{
+    position:relative;z-index:5;
+    font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--cyan);
+    letter-spacing:3px;text-transform:uppercase;margin-bottom:24px;
+    opacity:0;animation:fadeUp .8s ease forwards .2s;
+  }
+  .hero h1{
+    position:relative;z-index:5;
+    font-size:clamp(2.6rem,7vw,5.6rem);font-weight:700;line-height:1.04;
+    letter-spacing:-1.5px;max-width:1000px;
+    opacity:0;animation:fadeUp .9s ease forwards .4s;
+  }
+  .hero h1 em{font-style:normal;color:var(--cyan);}
+  .hero p{
+    position:relative;z-index:5;
+    margin-top:26px;max-width:560px;color:var(--muted);
+    font-size:1.05rem;line-height:1.6;
+    opacity:0;animation:fadeUp .9s ease forwards .6s;
+  }
+  .hero-ctas{
+    position:relative;z-index:5;
+    display:flex;gap:16px;margin-top:40px;
+    opacity:0;animation:fadeUp .9s ease forwards .8s;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--cyan),var(--violet));
+    color:#04060C;font-weight:600;padding:14px 30px;border-radius:100px;
+    font-size:0.92rem;transition:transform .3s ease, box-shadow .3s ease;
+    display:inline-block;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,212,255,0.25);}
+  .btn-ghost{
+    border:1px solid var(--line);padding:14px 30px;border-radius:100px;
+    font-size:0.92rem;font-weight:500;transition:.3s;
+  }
+  .btn-ghost:hover{border-color:var(--text);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+
+  .scroll-cue{
+    position:absolute;bottom:38px;left:50%;transform:translateX(-50%);
+    font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);
+    display:flex;flex-direction:column;align-items:center;gap:8px;z-index:5;
+    opacity:0;animation:fadeUp .9s ease forwards 1.1s;
+  }
+  .scroll-line{width:1px;height:30px;background:linear-gradient(var(--cyan),transparent);animation:scrollPulse 1.8s ease-in-out infinite;}
+  @keyframes scrollPulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+  /* ---------- Section shared ---------- */
+  section{position:relative;padding:140px 5vw;z-index:2;}
+  .section-head{max-width:680px;margin-bottom:70px;}
+  .tag{
+    font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--violet);
+    letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;display:block;
+  }
+  .section-head h2{font-size:clamp(2rem,4vw,3rem);font-weight:600;letter-spacing:-1px;line-height:1.15;}
+  .section-head p{margin-top:18px;color:var(--muted);font-size:1.02rem;line-height:1.6;}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---------- Services ---------- */
+  .services-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  }
+  .service-card{
+    background:var(--panel);padding:42px 34px;transition:background .35s ease;
+    position:relative;
+  }
+  .service-card:hover{background:var(--panel-2);}
+  .service-num{font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--cyan);margin-bottom:24px;display:block;}
+  .service-card h3{font-size:1.25rem;font-weight:600;margin-bottom:12px;letter-spacing:-0.3px;}
+  .service-card p{color:var(--muted);font-size:0.92rem;line-height:1.6;}
+  .service-icon{
+    width:42px;height:42px;margin-bottom:22px;
+    border:1px solid var(--line);border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .35s ease, transform .35s ease;
+  }
+  .service-card:hover .service-icon{border-color:var(--cyan);transform:rotate(8deg);}
+  .service-icon svg{width:20px;height:20px;stroke:var(--cyan);}
+
+  /* ---------- Process ---------- */
+  .process{display:flex;flex-direction:column;}
+  .process-row{
+    display:grid;grid-template-columns:90px 1fr 1fr;gap:30px;
+    padding:32px 0;border-top:1px solid var(--line);align-items:start;
+  }
+  .process-row:last-child{border-bottom:1px solid var(--line);}
+  .process-step{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:0.85rem;}
+  .process-row h4{font-size:1.3rem;font-weight:600;letter-spacing:-0.3px;}
+  .process-row p{color:var(--muted);font-size:0.95rem;line-height:1.65;}
+
+  /* ---------- Stats ---------- */
+  .stats-bar{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:60px 0;
+  }
+  .stat{text-align:center;border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:700;color:var(--cyan);}
+  .stat .label{margin-top:8px;color:var(--muted);font-size:0.82rem;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+
+  /* ---------- Contact ---------- */
+  .contact-wrap{
+    display:grid;grid-template-columns:1fr 1fr;gap:60px;
+    background:var(--panel);border:1px solid var(--line);border-radius:24px;
+    padding:64px;
+  }
+  .contact-wrap h2{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:600;letter-spacing:-1px;line-height:1.2;margin-bottom:20px;}
+  .contact-wrap > div > p{color:var(--muted);line-height:1.7;margin-bottom:36px;}
+  .contact-item{
+    display:flex;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--line);
+  }
+  .contact-item:last-child{padding-bottom:0;}
+  .contact-item .icon{
+    width:38px;height:38px;border-radius:10px;background:var(--panel-2);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .contact-item .icon svg{width:17px;height:17px;stroke:var(--cyan);}
+  .contact-item .label{font-size:0.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+  .contact-item .value{font-size:1rem;font-weight:500;margin-top:2px;}
+  .contact-item .value:hover{color:var(--cyan);}
+
+  .social-row{display:flex;gap:12px;margin-top:32px;}
+  .social-row a{
+    width:44px;height:44px;border:1px solid var(--line);border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    transition:.3s;
+  }
+  .social-row a:hover{border-color:var(--cyan);transform:translateY(-3px);}
+  .social-row svg{width:18px;height:18px;stroke:var(--text);}
+
+  .form-field{margin-bottom:20px;}
+  .form-field label{display:block;font-size:0.78rem;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;}
+  .form-field input,.form-field textarea{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.95rem;
+    transition:border-color .3s ease;
+  }
+  .form-field input:focus,.form-field textarea:focus{outline:none;border-color:var(--cyan);}
+  .form-submit{
+    width:100%;background:linear-gradient(135deg,var(--cyan),var(--violet));
+    color:#04060C;font-weight:600;padding:15px;border:none;border-radius:10px;
+    font-size:0.95rem;cursor:pointer;transition:transform .3s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .form-submit:hover{transform:translateY(-2px);}
+
+  footer{
+    padding:40px 5vw;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+    color:var(--muted);font-size:0.85rem;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media(max-width:980px){
+    .services-grid{grid-template-columns:repeat(2,1fr);}
+    .contact-wrap{grid-template-columns:1fr;padding:40px 28px;}
+    .stats-bar{grid-template-columns:repeat(2,1fr);row-gap:30px;}
+    .stat:nth-child(2){border-right:none;}
+  }
+  @media(max-width:720px){
+    .nav-links{
+      position:fixed;top:0;right:-100%;width:78%;height:100vh;
+      background:var(--panel);flex-direction:column;justify-content:center;
+      align-items:flex-start;padding:0 40px;gap:28px;transition:right .4s ease;
+      border-left:1px solid var(--line);
+    }
+    .nav-links.open{right:0;}
+    .nav-cta{display:none;}
+    .hamburger{display:flex;}
+    .services-grid{grid-template-columns:1fr;}
+    .process-row{grid-template-columns:1fr;gap:10px;}
+    .stats-bar{grid-template-columns:1fr 1fr;}
+    section{padding:90px 6vw;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-core"></div></div>
+
+<nav id="nav">
+  <div class="logo">CORE<span>X</span></div>
+  <div class="nav-links" id="navLinks">
+    <a href="#services">Services</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Start a project</a>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<section class="hero">
+  <canvas id="core-canvas"></canvas>
+  <div class="eyebrow mono">CoreX Technology · Digital Growth Engineering</div>
+  <h1>We build the <em>core</em><br>your business grows around.</h1>
+  <p>Lead generation, web development, AI-driven ads and IT solutions — engineered as one system, not five vendors.</p>
+  <div class="hero-ctas">
+    <a href="#contact" class="btn-primary">Book a strategy call</a>
+    <a href="#services" class="btn-ghost">See what we do</a>
+  </div>
+  <div class="scroll-cue"><span>SCROLL</span><div class="scroll-line"></div></div>
+</section>
+
+<section id="services">
+  <div class="section-head reveal">
+    <span class="tag">What we do</span>
+    <h2>Six disciplines. One core system.</h2>
+    <p>Every service feeds the next — leads fuel growth, growth fuels data, data fuels better ads. Nothing operates in isolation.</p>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"></path></svg></div>
+      <span class="service-num">01</span>
+      <h3>Lead Generation</h3>
+      <p>Targeted funnels and outreach systems that put qualified prospects in front of your sales team every week.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+      <span class="service-num">02</span>
+      <h3>Web Development</h3>
+      <p>Fast, conversion-focused websites and web apps — built clean, built to scale, built to rank.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M3 17l6-6 4 4 8-8"></path><path d="M17 7h4v4"></path></svg></div>
+      <span class="service-num">03</span>
+      <h3>Business Growth</h3>
+      <p>Strategy and operations support that turns traffic and leads into predictable, repeatable revenue.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></div>
+      <span class="service-num">04</span>
+      <h3>AI Ad Creation</h3>
+      <p>AI-generated and AI-optimized ad creative across platforms, tested and refined faster than any manual process.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="2" y="4" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 18v3"></path></svg></div>
+      <span class="service-num">05</span>
+      <h3>IT Solutions</h3>
+      <p>Infrastructure, automation and technical support that keeps everything you've built running smoothly.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg></div>
+      <span class="service-num">06</span>
+      <h3>Client Acquisition</h3>
+      <p>End-to-end pipelines that find, qualify, and convert the clients best suited to your business model.</p>
+    </div>
+  </div>
+</section>
+
+<section id="stats">
+  <div class="stats-bar reveal">
+    <div class="stat"><div class="num">6</div><div class="label">Core Services</div></div>
+    <div class="stat"><div class="num">100%</div><div class="label">In-house Build</div></div>
+    <div class="stat"><div class="num">24/7</div><div class="label">IT Support</div></div>
+    <div class="stat"><div class="num">1</div><div class="label">Connected System</div></div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="section-head reveal">
+    <span class="tag">How we work</span>
+    <h2>From first call to running system.</h2>
+  </div>
+  <div class="process reveal">
+    <div class="process-row">
+      <span class="process-step">01</span>
+      <h4>Discover</h4>
+      <p>We audit your current site, ads, and lead flow to find where growth is leaking.</p>
+    </div>
+    <div class="process-row">
+      <span class="process-step">02</span>
+      <h4>Build</h4>
+      <p>We design and develop the web presence, ad creative, and lead systems in parallel.</p>
+    </div>
+    <div class="process-row">
+      <span class="process-step">03</span>
+      <h4>Launch</h4>
+      <p>Everything goes live connected — site, ads, and IT infrastructure working as one.</p>
+    </div>
+    <div class="process-row">
+      <span class="process-step">04</span>
+      <h4>Grow</h4>
+      <p>We monitor, optimize, and scale based on real client and lead data, every week.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-wrap reveal">
+    <div>
+      <h2>Let's build your core.</h2>
+      <p>Tell us about your business and we'll map out where lead generation, web development, and AI ads can move the needle fastest.</p>
+
+      <div class="contact-item">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+        <div><div class="label">Phone</div><a class="value" href="tel:+918904041175">+91 89040 41175</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 4h16v16H4z" stroke="none"></path><path d="M22 6l-10 7L2 6"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg></div>
+        <div><div class="label">Email</div><a class="value" href="mailto:corextechnologypvtltd@gmail.com">corextechnologypvtltd@gmail.com</a></div>
+      </div>
+
+      <div class="social-row">
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle></svg></a>
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V8h4v1.5A5 5 0 0 1 16 8z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M21 11.5a8.5 8.5 0 0 1-12.36 7.57L3 21l1.93-5.64A8.5 8.5 0 1 1 21 11.5z"></path></svg></a>
+      </div>
+    </div>
+
+    <form onsubmit="event.preventDefault(); this.querySelector('.form-submit').textContent='Sent ✓';">
+      <div class="form-field"><label>Name</label><input type="text" placeholder="Your name" required></div>
+      <div class="form-field"><label>Email</label><input type="email" placeholder="you@company.com" required></div>
+      <div class="form-field"><label>What do you need?</label><textarea rows="4" placeholder="Tell us about your project..." required></textarea></div>
+      <button class="form-submit" type="submit">Send message</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 CoreX Technology Pvt Ltd</div>
+  <div class="mono">corextechnologypvtltd@gmail.com</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  // ----- Loader -----
+  window.addEventListener('load', () => {
+    document.getElementById('loader').classList.add('hidden');
+  });
+
+  // ----- Nav scroll + mobile -----
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // ----- Scroll reveal -----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ----- Three.js Core -----
+  const canvas = document.getElementById('core-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.z = 6;
+
+  function resize() {
+    const hero = document.querySelector('.hero');
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Core wireframe icosahedron group
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const geo = new THREE.IcosahedronGeometry(2, 1);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x00D4FF, wireframe: true, transparent: true, opacity: 0.55 });
+  const core = new THREE.Mesh(geo, mat);
+  group.add(core);
+
+  const innerGeo = new THREE.IcosahedronGeometry(1.3, 0);
+  const innerMat = new THREE.MeshBasicMaterial({ color: 0x7B5CFF, wireframe: true, transparent: true, opacity: 0.4 });
+  const inner = new THREE.Mesh(innerGeo, innerMat);
+  group.add(inner);
+
+  // Particle field
+  const particleCount = 300;
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i*3] = (Math.random()-0.5) * 14;
+    positions[i*3+1] = (Math.random()-0.5) * 14;
+    positions[i*3+2] = (Math.random()-0.5) * 8 - 2;
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const pMat = new THREE.PointsMaterial({ color: 0xE8EBF5, size: 0.025, transparent: true, opacity: 0.5 });
+  const particles = new THREE.Points(pGeo, pMat);
+  scene.add(particles);
+
+  let mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5);
+    mouseY = (e.clientY / window.innerHeight - 0.5);
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.0028;
+    group.rotation.x += 0.0011;
+    inner.rotation.y -= 0.004;
+    particles.rotation.y += 0.0004;
+
+    camera.position.x += (mouseX * 1.2 - camera.position.x) * 0.04;
+    camera.position.y += (-mouseY * 1.2 - camera.position.y) * 0.04;
+    camera.lookAt(scene.position);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+</script>
+
+</body>
+</html>
